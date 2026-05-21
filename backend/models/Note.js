@@ -16,6 +16,16 @@ const noteSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    scheme: {
+      type: String,
+      required: false,
+      default: '2019',
+    },
+    department: {
+      type: String,
+      required: false,
+      default: 'CSE',
+    },
     description: {
       type: String,
       trim: true,
@@ -37,6 +47,27 @@ const noteSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    ratings: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+        rating: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+      },
+    ],
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    views: {
+  type: Number,
+  default: 0,
+},
   },
   {
     timestamps: true,

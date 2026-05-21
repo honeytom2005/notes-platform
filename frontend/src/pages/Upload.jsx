@@ -3,35 +3,42 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import toast from 'react-hot-toast';
 import { FaUpload, FaFilePdf } from 'react-icons/fa';
-
-const SUBJECTS = [
-  'Mathematics',
-  'Physics',
-  'Chemistry',
-  'Biology',
-  'Computer Science',
-  'English',
-  'History',
-  'Geography',
-  'Economics',
-  'Other',
-];
-
-const SEMESTERS = ['1', '2', '3', '4', '5', '6', '7', '8'];
+import { KTU_DATA, DEPARTMENTS, SCHEMES, SEMESTERS } from '../data/ktuData';
 
 const Upload = () => {
   const [formData, setFormData] = useState({
     title: '',
-    subject: '',
+    scheme: '',
+    department: '',
     semester: '',
+    subject: '',
     description: '',
   });
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Get subjects based on scheme, department, semester
+  const getSubjects = () => {
+    const { scheme, department, semester } = formData;
+    if (scheme && department && semester) {
+      return KTU_DATA[scheme]?.[department]?.[semester] || [];
+    }
+    return [];
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    // Reset dependent fields when parent changes
+    if (name === 'scheme') {
+      setFormData({ ...formData, scheme: value, department: '', semester: '', subject: '' });
+    } else if (name === 'department') {
+      setFormData({ ...formData, department: value, semester: '', subject: '' });
+    } else if (name === 'semester') {
+      setFormData({ ...formData, semester: value, subject: '' });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -50,12 +57,18 @@ const Upload = () => {
       toast.error('Please select a PDF file!');
       return;
     }
+    if (!formData.subject) {
+      toast.error('Please select a subject!');
+      return;
+    }
     setLoading(true);
     try {
       const data = new FormData();
       data.append('title', formData.title);
-      data.append('subject', formData.subject);
+      data.append('scheme', formData.scheme);
+      data.append('department', formData.department);
       data.append('semester', formData.semester);
+      data.append('subject', formData.subject);
       data.append('description', formData.description);
       data.append('file', file);
 
@@ -71,6 +84,8 @@ const Upload = () => {
       setLoading(false);
     }
   };
+
+  const subjects = getSubjects();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-10 px-4">
@@ -91,7 +106,7 @@ const Upload = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          
+
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -102,53 +117,95 @@ const Upload = () => {
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="e.g. Calculus Chapter 3 Notes"
+              placeholder="e.g. Data Structures Module 1 Notes"
               required
               className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Subject and Semester */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Subject <span className="text-red-500">*</span>
-              </label>
-              <select
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Subject</option>
-                {SUBJECTS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Scheme */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Scheme <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="scheme"
+              value={formData.scheme}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Scheme</option>
+              {SCHEMES.map((s) => (
+                <option key={s} value={s}>KTU {s} Scheme</option>
+              ))}
+            </select>
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Semester <span className="text-red-500">*</span>
-              </label>
-              <select
-                name="semester"
-                value={formData.semester}
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Semester</option>
-                {SEMESTERS.map((s) => (
-                  <option key={s} value={s}>
-                    Semester {s}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Department */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Department <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              required
+              disabled={!formData.scheme}
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              <option value="">
+                {formData.scheme ? 'Select Department' : 'Select Scheme first'}
+              </option>
+              {DEPARTMENTS.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Semester */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Semester <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="semester"
+              value={formData.semester}
+              onChange={handleChange}
+              required
+              disabled={!formData.department}
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              <option value="">
+                {formData.department ? 'Select Semester' : 'Select Department first'}
+              </option>
+              {SEMESTERS.map((s) => (
+                <option key={s} value={s}>Semester {s}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Subject */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Subject <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
+              required
+              disabled={!formData.semester}
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              <option value="">
+                {formData.semester ? 'Select Subject' : 'Select Semester first'}
+              </option>
+              {subjects.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
           </div>
 
           {/* Description */}

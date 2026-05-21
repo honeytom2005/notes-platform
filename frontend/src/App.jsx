@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Upload from './pages/Upload';
 import MyNotes from './pages/MyNotes';
+import Profile from './pages/Profile';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -37,6 +38,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <MyNotes />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <PrivateRoute>
+                    <Profile />
                   </PrivateRoute>
                 }
               />
