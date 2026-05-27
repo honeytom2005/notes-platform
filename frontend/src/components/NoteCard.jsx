@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FaDownload, FaTrash, FaUser, FaCalendar, FaStar, FaEye } from 'react-icons/fa';
+import { FaTrash, FaUser, FaCalendar, FaStar, FaEye } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import axios from '../api/axios';
 import toast from 'react-hot-toast';
@@ -23,15 +23,15 @@ const NoteCard = ({ note, onDelete }) => {
   window.open(pdfUrl, '_blank');
 };
 
-const handleDownload = async () => {
+const handleOpenPDF = async () => {
   try {
     const { data } = await axios.put(`/notes/${note._id}/views`);
     setViews(data.views);
   } catch (error) {
     console.log('View count error:', error);
   }
-  // Just open directly in new tab
-  window.open(note.fileUrl, '_blank');
+  const googleDriveUrl = `https://drive.google.com/viewerng/viewer?url=${encodeURIComponent(note.fileUrl)}`;
+  window.open(googleDriveUrl, '_blank');
 };
 
   const handleRate = async (rating) => {
@@ -136,18 +136,11 @@ const handleDownload = async () => {
       {/* Buttons */}
 <div className="flex gap-2 mt-auto">
   <button
-    onClick={handleView}
-    className="flex-1 flex items-center justify-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm font-medium py-2 px-3 rounded-xl transition-colors duration-200"
+    onClick={handleOpenPDF}
+    className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium py-2 px-3 rounded-xl transition-colors duration-200"
   >
     <FaEye />
-    View
-  </button>
-  <button
-    onClick={handleDownload}
-    className="flex-1 flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium py-2 px-3 rounded-xl transition-colors duration-200"
-  >
-    <FaDownload />
-    Save
+    Open PDF
   </button>
   {user && user._id === note.uploadedBy && (
     <button
