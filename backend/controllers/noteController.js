@@ -20,7 +20,7 @@ const uploadNote = async (req, res) => {
       scheme,
       department,
       description,
-      fileUrl: req.file.path.endsWith('.pdf') ? req.file.path : req.file.path + '.pdf',
+      fileUrl: req.file.path,
       filePublicId: req.file.filename,
       uploadedBy: req.user._id,
       uploaderName: req.user.name,
