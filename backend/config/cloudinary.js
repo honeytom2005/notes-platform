@@ -15,8 +15,7 @@ const storage = new CloudinaryStorage({
       folder: 'notes-platform',
       resource_type: 'raw',
       format: 'pdf',
-      type: 'upload',
-      access_mode: 'public',
+      public_id: `${Date.now()}-${file.originalname.replace('.pdf', '')}`,
     };
   },
 });

@@ -30,20 +30,8 @@ const handleDownload = async () => {
   } catch (error) {
     console.log('View count error:', error);
   }
-
-  // Convert Cloudinary raw URL to proper PDF download URL
-  const url = note.fileUrl;
-  const downloadUrl = url
-    .replace('/raw/upload/', '/raw/upload/fl_attachment/')
-    + (url.endsWith('.pdf') ? '' : '.pdf');
-
-  const link = document.createElement('a');
-  link.href = downloadUrl;
-  link.setAttribute('download', `${note.title}.pdf`);
-  link.setAttribute('target', '_blank');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  // Just open directly in new tab
+  window.open(note.fileUrl, '_blank');
 };
 
   const handleRate = async (rating) => {
