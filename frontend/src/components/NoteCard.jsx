@@ -19,14 +19,17 @@ const NoteCard = ({ note, onDelete }) => {
   });
 
   const handleDownload = async () => {
-    try {
-      const { data } = await axios.put(`/notes/${note._id}/views`);
-      setViews(data.views);
-    } catch (error) {
-      console.log('View count error:', error);
-    }
-    window.open(note.fileUrl, '_blank');
-  };
+  try {
+    const { data } = await axios.put(`/notes/${note._id}/views`);
+    setViews(data.views);
+  } catch (error) {
+    console.log('View count error:', error);
+  }
+
+  // Use Google Drive PDF viewer for mobile compatibility
+  const pdfUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(note.fileUrl)}`;
+  window.open(pdfUrl, '_blank');
+};
 
   const handleRate = async (rating) => {
     if (!user) {
