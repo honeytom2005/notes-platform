@@ -30,14 +30,8 @@ const handleOpenPDF = async () => {
   } catch (error) {
     console.log('View count error:', error);
   }
-
-  // Remove .pdf extension if added twice
-  const cleanUrl = note.fileUrl.endsWith('.pdf.pdf') 
-    ? note.fileUrl.slice(0, -4) 
-    : note.fileUrl;
-
-  const googleDriveUrl = `https://drive.google.com/viewerng/viewer?url=${encodeURIComponent(cleanUrl)}`;
-  window.open(googleDriveUrl, '_blank');
+  // Direct open - Cloudinary image type serves proper PDF
+  window.open(note.fileUrl, '_blank');
 };
 
   const handleRate = async (rating) => {

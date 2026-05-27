@@ -13,9 +13,9 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
     return {
       folder: 'notes-platform',
-      resource_type: 'raw',
+      resource_type: 'image',
       format: 'pdf',
-      public_id: `${Date.now()}-${file.originalname.replace('.pdf', '')}`,
+      type: 'upload',
     };
   },
 });
