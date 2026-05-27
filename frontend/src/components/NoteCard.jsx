@@ -30,10 +30,12 @@ const handleOpenPDF = async () => {
   } catch (error) {
     console.log('View count error:', error);
   }
-  // Direct open - Cloudinary image type serves proper PDF
-  window.open(note.fileUrl, '_blank');
-};
 
+  // Use Google Docs viewer instead of Drive viewer
+  const fileUrl = note.fileUrl;
+  const googleDocsUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=false`;
+  window.open(googleDocsUrl, '_blank');
+};
   const handleRate = async (rating) => {
     if (!user) {
       toast.error('Please login to rate notes!');

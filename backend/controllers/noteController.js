@@ -103,7 +103,7 @@ const deleteNote = async (req, res) => {
     }
 
     await cloudinary.uploader.destroy(note.filePublicId, {
-  resource_type: 'image',
+  resource_type: 'raw',
 });
 
     await note.deleteOne();
