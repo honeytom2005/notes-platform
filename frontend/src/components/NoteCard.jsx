@@ -18,7 +18,12 @@ const NoteCard = ({ note, onDelete }) => {
     return 0;
   });
 
-  const handleDownload = async () => {
+  const handleView = () => {
+  const pdfUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(note.fileUrl)}`;
+  window.open(pdfUrl, '_blank');
+};
+
+const handleDownload = async () => {
   try {
     const { data } = await axios.put(`/notes/${note._id}/views`);
     setViews(data.views);
@@ -26,9 +31,14 @@ const NoteCard = ({ note, onDelete }) => {
     console.log('View count error:', error);
   }
 
-  // Use Google Drive PDF viewer for mobile compatibility
-  const pdfUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(note.fileUrl)}`;
-  window.open(pdfUrl, '_blank');
+  // Force download to phone files
+  const link = document.createElement('a');
+  link.href = note.fileUrl;
+  link.setAttribute('download', `${note.title}.pdf`);
+  link.setAttribute('target', '_blank');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 
   const handleRate = async (rating) => {
@@ -131,23 +141,30 @@ const NoteCard = ({ note, onDelete }) => {
       </div>
 
       {/* Buttons */}
-      <div className="flex gap-2 mt-auto">
-        <button
-          onClick={handleDownload}
-          className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium py-2 px-3 rounded-xl transition-colors duration-200"
-        >
-          <FaDownload />
-          Download
-        </button>
-        {user && user._id === note.uploadedBy && (
-          <button
-            onClick={() => onDelete(note._id)}
-            className="flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-600 text-xs sm:text-sm font-medium py-2 px-3 rounded-xl transition-colors duration-200"
-          >
-            <FaTrash />
-          </button>
-        )}
-      </div>
+<div className="flex gap-2 mt-auto">
+  <button
+    onClick={handleView}
+    className="flex-1 flex items-center justify-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs sm:text-sm font-medium py-2 px-3 rounded-xl transition-colors duration-200"
+  >
+    <FaEye />
+    View
+  </button>
+  <button
+    onClick={handleDownload}
+    className="flex-1 flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium py-2 px-3 rounded-xl transition-colors duration-200"
+  >
+    <FaDownload />
+    Save
+  </button>
+  {user && user._id === note.uploadedBy && (
+    <button
+      onClick={() => onDelete(note._id)}
+      className="flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-600 text-xs sm:text-sm font-medium py-2 px-3 rounded-xl transition-colors duration-200"
+    >
+      <FaTrash />
+    </button>
+  )}
+</div>
     </div>
   );
 };
