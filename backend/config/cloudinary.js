@@ -10,13 +10,17 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: 'notes-platform',
-    allowed_formats: ['pdf'],
-    resource_type: 'raw',
-    access_mode: 'public',
+  params: async (req, file) => {
+    return {
+      folder: 'notes-platform',
+      resource_type: 'raw',
+      format: 'pdf',
+      type: 'upload',
+      access_mode: 'public',
+    };
   },
 });
+
 const upload = multer({
   storage: storage,
   limits: {

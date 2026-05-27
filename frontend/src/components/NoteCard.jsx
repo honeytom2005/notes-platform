@@ -31,9 +31,14 @@ const handleDownload = async () => {
     console.log('View count error:', error);
   }
 
-  // Force download to phone files
+  // Convert Cloudinary raw URL to proper PDF download URL
+  const url = note.fileUrl;
+  const downloadUrl = url
+    .replace('/raw/upload/', '/raw/upload/fl_attachment/')
+    + (url.endsWith('.pdf') ? '' : '.pdf');
+
   const link = document.createElement('a');
-  link.href = note.fileUrl;
+  link.href = downloadUrl;
   link.setAttribute('download', `${note.title}.pdf`);
   link.setAttribute('target', '_blank');
   document.body.appendChild(link);
