@@ -30,11 +30,7 @@ const handleOpenPDF = async () => {
   } catch (error) {
     console.log('View count error:', error);
   }
-
-  // Convert raw URL to fl_attachment for proper download
-  const url = note.fileUrl;
-  const downloadUrl = url.replace('/raw/upload/', '/raw/upload/fl_attachment/');
-  window.open(downloadUrl, '_blank');
+  window.open(note.fileUrl, '_blank');
 };
   const handleRate = async (rating) => {
     if (!user) {
