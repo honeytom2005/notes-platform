@@ -11,10 +11,11 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
+    const cleanName = file.originalname.replace(/\s+/g, '_').replace('.pdf', '');
     return {
       folder: 'notes-platform',
       resource_type: 'raw',
-      format: 'pdf',
+      public_id: `${Date.now()}-${cleanName}.pdf`,
     };
   },
 });

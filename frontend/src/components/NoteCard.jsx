@@ -31,10 +31,10 @@ const handleOpenPDF = async () => {
     console.log('View count error:', error);
   }
 
-  // Use Google Docs viewer instead of Drive viewer
-  const fileUrl = note.fileUrl;
-  const googleDocsUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=false`;
-  window.open(googleDocsUrl, '_blank');
+  // Convert raw URL to fl_attachment for proper download
+  const url = note.fileUrl;
+  const downloadUrl = url.replace('/raw/upload/', '/raw/upload/fl_attachment/');
+  window.open(downloadUrl, '_blank');
 };
   const handleRate = async (rating) => {
     if (!user) {
